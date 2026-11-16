@@ -1,0 +1,8 @@
+{
+  "split": "val (n=61)",
+  "top_k": 5,
+  "mean_coverage": 1.0,
+  "rows_at_full_coverage": 61,
+  "rows_below_full": 0,
+  "definition": "fraction of top-5 displayed sentences backed by a registry phrase (fallbacks tracked, not hidden)"
+}

@@ -1,0 +1,121 @@
+{
+  "dataset": "val split (n=61)",
+  "space": "log-odds",
+  "note": "mean |SHAP| over val rows; test set not used; correlated features may share/redistribute attribution",
+  "table": [
+    {
+      "rank": 1,
+      "feature": "domain_length",
+      "mean_abs_shap": 1.91482,
+      "mean_signed_shap": -0.19115
+    },
+    {
+      "rank": 2,
+      "feature": "url_length",
+      "mean_abs_shap": 1.35484,
+      "mean_signed_shap": -0.0012
+    },
+    {
+      "rank": 3,
+      "feature": "num_dots",
+      "mean_abs_shap": 1.27486,
+      "mean_signed_shap": 0.11729
+    },
+    {
+      "rank": 4,
+      "feature": "has_https",
+      "mean_abs_shap": 0.82761,
+      "mean_signed_shap": 0.02584
+    },
+    {
+      "rank": 5,
+      "feature": "num_hyphens",
+      "mean_abs_shap": 0.81974,
+      "mean_signed_shap": -0.09485
+    },
+    {
+      "rank": 6,
+      "feature": "num_subdomains",
+      "mean_abs_shap": 0.61919,
+      "mean_signed_shap": 0.16687
+    },
+    {
+      "rank": 7,
+      "feature": "num_digits",
+      "mean_abs_shap": 0.48848,
+      "mean_signed_shap": -0.04143
+    },
+    {
+      "rank": 8,
+      "feature": "digit_in_domain_ratio",
+      "mean_abs_shap": 0.39818,
+      "mean_signed_shap": -0.0054
+    },
+    {
+      "rank": 9,
+      "feature": "has_path",
+      "mean_abs_shap": 0.38515,
+      "mean_signed_shap": -0.00564
+    },
+    {
+      "rank": 10,
+      "feature": "has_suspicious_keyword",
+      "mean_abs_shap": 0.117,
+      "mean_signed_shap": -0.00857
+    },
+    {
+      "rank": 11,
+      "feature": "num_url_params",
+      "mean_abs_shap": 0.08245,
+      "mean_signed_shap": -0.08245
+    },
+    {
+      "rank": 12,
+      "feature": "path_length",
+      "mean_abs_shap": 0.01533,
+      "mean_signed_shap": -0.00272
+    },
+    {
+      "rank": 13,
+      "feature": "percent_encoded_count",
+      "mean_abs_shap": 0.00832,
+      "mean_signed_shap": -0.00832
+    },
+    {
+      "rank": 14,
+      "feature": "query_length",
+      "mean_abs_shap": 0.00578,
+      "mean_signed_shap": -0.00578
+    },
+    {
+      "rank": 15,
+      "feature": "has_shortener",
+      "mean_abs_shap": 0.00506,
+      "mean_signed_shap": 0.00506
+    },
+    {
+      "rank": 16,
+      "feature": "num_special_chars",
+      "mean_abs_shap": 0.00296,
+      "mean_signed_shap": -0.00261
+    },
+    {
+      "rank": 17,
+      "feature": "has_port",
+      "mean_abs_shap": 0.0,
+      "mean_signed_shap": 0.0
+    },
+    {
+      "rank": 18,
+      "feature": "has_ip_host",
+      "mean_abs_shap": 0.0,
+      "mean_signed_shap": 0.0
+    },
+    {
+      "rank": 19,
+      "feature": "has_at_symbol",
+      "mean_abs_shap": 0.0,
+      "mean_signed_shap": 0.0
+    }
+  ]
+}

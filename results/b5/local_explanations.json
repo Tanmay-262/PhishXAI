@@ -1,0 +1,405 @@
+{
+  "cases": [
+    {
+      "url": "http://boxi8-637-w5od-z5yb4-16-09-2026-hh.pages.dev/",
+      "note": "val: correctly detected phishing (highest val phishing probability)",
+      "verdict": "phishing",
+      "probability": 1.0,
+      "threshold": 0.29943912719285576,
+      "base_value": 2.620683,
+      "decision_function_log_odds": 16.988216,
+      "total_shap_sum": 14.367532,
+      "top_positive": [
+        [
+          "has_https",
+          3.7186
+        ],
+        [
+          "domain_length",
+          3.5019
+        ],
+        [
+          "num_hyphens",
+          2.5283
+        ],
+        [
+          "num_digits",
+          1.4862
+        ],
+        [
+          "digit_in_domain_ratio",
+          1.271
+        ]
+      ],
+      "top_negative": [
+        [
+          "num_subdomains",
+          -0.2555
+        ],
+        [
+          "num_url_params",
+          -0.0825
+        ],
+        [
+          "has_suspicious_keyword",
+          -0.0672
+        ],
+        [
+          "percent_encoded_count",
+          -0.0083
+        ],
+        [
+          "query_length",
+          -0.0058
+        ]
+      ],
+      "sentences": [
+        "The URL has no HTTPS encryption, which the model weighs toward phishing.",
+        "The domain name is unusually long.",
+        "The domain uses many hyphens, a common phishing trick.",
+        "The URL contains many digits, often used to disguise domains.",
+        "The domain name is made up mostly of digits."
+      ],
+      "coverage_top5": 1.0,
+      "grouped_concepts": [
+        {
+          "group": "domain structure",
+          "signed_sum": 6.7262,
+          "n_features": 4
+        },
+        {
+          "group": "connection",
+          "signed_sum": 3.7186,
+          "n_features": 1
+        },
+        {
+          "group": "digits",
+          "signed_sum": 2.7572,
+          "n_features": 2
+        },
+        {
+          "group": "overall length",
+          "signed_sum": 0.7921,
+          "n_features": 3
+        },
+        {
+          "group": "other",
+          "signed_sum": 0.4437,
+          "n_features": 2
+        },
+        {
+          "group": "keywords",
+          "signed_sum": -0.0672,
+          "n_features": 1
+        },
+        {
+          "group": "special characters",
+          "signed_sum": -0.0081,
+          "n_features": 2
+        },
+        {
+          "group": "security signals",
+          "signed_sum": 0.0051,
+          "n_features": 4
+        }
+      ],
+      "disclaimer": "These points describe why the model made this prediction; they are not proof that the URL is phishing or safe."
+    },
+    {
+      "url": "https://adobe.io/products",
+      "note": "val: correctly classified legitimate (lowest phishing probability)",
+      "verdict": "legitimate",
+      "probability": 0.005388,
+      "threshold": 0.29943912719285576,
+      "base_value": 2.620683,
+      "decision_function_log_odds": -5.218226,
+      "total_shap_sum": -7.838909,
+      "top_positive": [
+        [
+          "has_shortener",
+          0.0051
+        ],
+        [
+          "path_length",
+          0.0021
+        ],
+        [
+          "num_special_chars",
+          0.0002
+        ]
+      ],
+      "top_negative": [
+        [
+          "domain_length",
+          -2.5368
+        ],
+        [
+          "url_length",
+          -1.3412
+        ],
+        [
+          "num_dots",
+          -1.2609
+        ],
+        [
+          "num_hyphens",
+          -0.7373
+        ],
+        [
+          "has_https",
+          -0.4529
+        ]
+      ],
+      "sentences": [
+        "The domain name is short, like many familiar sites, which lowers the model's phishing score.",
+        "The URL is short, which lowers the model's phishing score.",
+        "The URL has only a few dots, without extra subdomain layers.",
+        "The domain name has few or no hyphens.",
+        "The site uses HTTPS encryption, which the model weighs toward legitimate."
+      ],
+      "coverage_top5": 1.0,
+      "grouped_concepts": [
+        {
+          "group": "domain structure",
+          "signed_sum": -4.7904,
+          "n_features": 4
+        },
+        {
+          "group": "overall length",
+          "signed_sum": -1.3448,
+          "n_features": 3
+        },
+        {
+          "group": "digits",
+          "signed_sum": -0.7924,
+          "n_features": 2
+        },
+        {
+          "group": "connection",
+          "signed_sum": -0.4529,
+          "n_features": 1
+        },
+        {
+          "group": "other",
+          "signed_sum": -0.3881,
+          "n_features": 2
+        },
+        {
+          "group": "keywords",
+          "signed_sum": -0.0672,
+          "n_features": 1
+        },
+        {
+          "group": "special characters",
+          "signed_sum": -0.0081,
+          "n_features": 2
+        },
+        {
+          "group": "security signals",
+          "signed_sum": 0.0051,
+          "n_features": 4
+        }
+      ],
+      "disclaimer": "These points describe why the model made this prediction; they are not proof that the URL is phishing or safe."
+    },
+    {
+      "url": "https://uspostaldirect.com/",
+      "note": "test: known shared FALSE NEGATIVE (all 3 B4 models missed it)",
+      "verdict": "legitimate",
+      "probability": 0.07318,
+      "threshold": 0.29943912719285576,
+      "base_value": 2.620683,
+      "decision_function_log_odds": -2.53884,
+      "total_shap_sum": -5.159523,
+      "top_positive": [
+        [
+          "has_path",
+          0.5261
+        ],
+        [
+          "path_length",
+          0.015
+        ],
+        [
+          "has_shortener",
+          0.0051
+        ],
+        [
+          "num_special_chars",
+          0.0002
+        ]
+      ],
+      "top_negative": [
+        [
+          "num_dots",
+          -1.2609
+        ],
+        [
+          "url_length",
+          -1.1838
+        ],
+        [
+          "domain_length",
+          -0.8594
+        ],
+        [
+          "num_hyphens",
+          -0.7373
+        ],
+        [
+          "has_https",
+          -0.4529
+        ]
+      ],
+      "sentences": [
+        "The URL has only a few dots, without extra subdomain layers.",
+        "The URL is short, which lowers the model's phishing score.",
+        "The domain name is short, like many familiar sites, which lowers the model's phishing score.",
+        "The domain name has few or no hyphens.",
+        "The link includes a long path that can fake a trusted page."
+      ],
+      "coverage_top5": 1.0,
+      "grouped_concepts": [
+        {
+          "group": "domain structure",
+          "signed_sum": -3.113,
+          "n_features": 4
+        },
+        {
+          "group": "overall length",
+          "signed_sum": -1.1746,
+          "n_features": 3
+        },
+        {
+          "group": "digits",
+          "signed_sum": -0.7924,
+          "n_features": 2
+        },
+        {
+          "group": "connection",
+          "signed_sum": -0.4529,
+          "n_features": 1
+        },
+        {
+          "group": "other",
+          "signed_sum": 0.4437,
+          "n_features": 2
+        },
+        {
+          "group": "keywords",
+          "signed_sum": -0.0672,
+          "n_features": 1
+        },
+        {
+          "group": "special characters",
+          "signed_sum": -0.0081,
+          "n_features": 2
+        },
+        {
+          "group": "security signals",
+          "signed_sum": 0.0051,
+          "n_features": 4
+        }
+      ],
+      "disclaimer": "These points describe why the model made this prediction; they are not proof that the URL is phishing or safe."
+    },
+    {
+      "url": "https://shopee.co.id/images/hero.png",
+      "note": "test: LR FALSE POSITIVE (constructed legitimate URL)",
+      "verdict": "phishing",
+      "probability": 0.675162,
+      "threshold": 0.29943912719285576,
+      "base_value": 2.620683,
+      "decision_function_log_odds": 0.731624,
+      "total_shap_sum": -1.889059,
+      "top_positive": [
+        [
+          "num_dots",
+          3.1639
+        ],
+        [
+          "has_shortener",
+          0.0051
+        ],
+        [
+          "num_special_chars",
+          0.0002
+        ]
+      ],
+      "top_negative": [
+        [
+          "domain_length",
+          -1.8658
+        ],
+        [
+          "num_hyphens",
+          -0.7373
+        ],
+        [
+          "url_length",
+          -0.4758
+        ],
+        [
+          "has_https",
+          -0.4529
+        ],
+        [
+          "num_digits",
+          -0.4444
+        ]
+      ],
+      "sentences": [
+        "The URL contains many dots, which can fake a trustworthy domain.",
+        "The domain name is short, like many familiar sites, which lowers the model's phishing score.",
+        "The domain name has few or no hyphens.",
+        "The URL is short, which lowers the model's phishing score.",
+        "The site uses HTTPS encryption, which the model weighs toward legitimate."
+      ],
+      "coverage_top5": 1.0,
+      "grouped_concepts": [
+        {
+          "group": "digits",
+          "signed_sum": -0.7924,
+          "n_features": 2
+        },
+        {
+          "group": "overall length",
+          "signed_sum": -0.4907,
+          "n_features": 3
+        },
+        {
+          "group": "connection",
+          "signed_sum": -0.4529,
+          "n_features": 1
+        },
+        {
+          "group": "other",
+          "signed_sum": -0.3881,
+          "n_features": 2
+        },
+        {
+          "group": "domain structure",
+          "signed_sum": 0.3053,
+          "n_features": 4
+        },
+        {
+          "group": "keywords",
+          "signed_sum": -0.0672,
+          "n_features": 1
+        },
+        {
+          "group": "special characters",
+          "signed_sum": -0.0081,
+          "n_features": 2
+        },
+        {
+          "group": "security signals",
+          "signed_sum": 0.0051,
+          "n_features": 4
+        }
+      ],
+      "disclaimer": "These points describe why the model made this prediction; they are not proof that the URL is phishing or safe."
+    }
+  ],
+  "note": "SHAP values are in log-odds space; sentences describe model behavior only, not causal proof. Raw feature-level contributions are kept alongside grouped presentation concepts."
+}

@@ -1,4 +1,4 @@
-# PhishXAI feature registry v1 (B3)
+# PhishXAI feature registry v1.1 (B3 + B5 phrase enrichment)
 # -------------------------------
 # SINGLE SOURCE OF TRUTH for the feature extractor AND the explanation
 # translator. The order of `features` entries IS the model feature order
@@ -21,7 +21,7 @@ features:
     human_name: "URL length"
     phrases:
       toward_phishing: "The URL is very long, which is common in suspicious links."
-      toward_legitimate: null
+      toward_legitimate: "The URL is short, which lowers the model's phishing score."
 
   - name: domain_length
     type: int
@@ -29,7 +29,7 @@ features:
     human_name: "Domain length"
     phrases:
       toward_phishing: "The domain name is unusually long."
-      toward_legitimate: null
+      toward_legitimate: "The domain name is short, like many familiar sites, which lowers the model's phishing score."
 
   - name: num_dots
     type: int
@@ -37,7 +37,7 @@ features:
     human_name: "Number of dots"
     phrases:
       toward_phishing: "The URL contains many dots, which can fake a trustworthy domain."
-      toward_legitimate: null
+      toward_legitimate: "The URL has only a few dots, without extra subdomain layers."
 
   - name: num_subdomains
     type: int
@@ -45,7 +45,7 @@ features:
     human_name: "Number of subdomains"
     phrases:
       toward_phishing: "The URL hides the real site deep inside many subdomains."
-      toward_legitimate: null
+      toward_legitimate: "The link sits directly on the main domain, without extra subdomains."
 
   - name: num_hyphens
     type: int
@@ -53,7 +53,7 @@ features:
     human_name: "Hyphens in the domain"
     phrases:
       toward_phishing: "The domain uses many hyphens, a common phishing trick."
-      toward_legitimate: null
+      toward_legitimate: "The domain name has few or no hyphens."
 
   - name: num_digits
     type: int
@@ -61,7 +61,7 @@ features:
     human_name: "Digits in the URL"
     phrases:
       toward_phishing: "The URL contains many digits, often used to disguise domains."
-      toward_legitimate: null
+      toward_legitimate: "The URL contains few or no digits."
 
   - name: digit_in_domain_ratio
     type: float
@@ -69,7 +69,7 @@ features:
     human_name: "Digit share of the domain"
     phrases:
       toward_phishing: "The domain name is made up mostly of digits."
-      toward_legitimate: null
+      toward_legitimate: "The domain name is made mostly of letters, not digits."
 
   - name: num_special_chars
     type: int
@@ -77,7 +77,7 @@ features:
     human_name: "Unusual special characters"
     phrases:
       toward_phishing: "The URL contains unusual special characters."
-      toward_legitimate: null
+      toward_legitimate: "The URL has no unusual special characters."
 
   - name: has_ip_host
     type: int
@@ -92,8 +92,8 @@ features:
     computation: "1 if scheme is https, else 0"
     human_name: "Encrypted connection (HTTPS)"
     phrases:
-      toward_phishing: null
-      toward_legitimate: "The site uses HTTPS encryption."
+      toward_phishing: "The URL has no HTTPS encryption, which the model weighs toward phishing."
+      toward_legitimate: "The site uses HTTPS encryption, which the model weighs toward legitimate."
 
   - name: has_port
     type: int
@@ -101,7 +101,7 @@ features:
     human_name: "Explicit port number"
     phrases:
       toward_phishing: "The URL points at an unusual port number."
-      toward_legitimate: null
+      toward_legitimate: "No unusual port number is used in the URL."
 
   - name: has_at_symbol
     type: int
@@ -109,7 +109,7 @@ features:
     human_name: "@ symbol in the URL"
     phrases:
       toward_phishing: "The @ symbol can hide the real destination of the link."
-      toward_legitimate: null
+      toward_legitimate: "The URL contains no '@' symbol."
 
   - name: has_shortener
     type: int
@@ -117,7 +117,7 @@ features:
     human_name: "URL shortening service"
     phrases:
       toward_phishing: "The link uses a URL shortening service, hiding where it really goes."
-      toward_legitimate: null
+      toward_legitimate: "The link is not from a URL shortening service."
 
   - name: path_length
     type: int
@@ -133,7 +133,7 @@ features:
     human_name: "Has a path"
     phrases:
       toward_phishing: "The link includes a long path that can fake a trusted page."
-      toward_legitimate: null
+      toward_legitimate: "The URL has no long path hiding the destination."
 
   - name: query_length
     type: int
@@ -141,7 +141,7 @@ features:
     human_name: "Query string length"
     phrases:
       toward_phishing: "The URL carries a long query string of extra parameters."
-      toward_legitimate: null
+      toward_legitimate: "The URL carries no long query string."
 
   - name: num_url_params
     type: int
@@ -149,7 +149,7 @@ features:
     human_name: "Number of URL parameters"
     phrases:
       toward_phishing: "The URL stacks many parameters, which is atypical for normal pages."
-      toward_legitimate: null
+      toward_legitimate: "The URL stacks few or no extra parameters."
 
   - name: percent_encoded_count
     type: int
@@ -157,7 +157,7 @@ features:
     human_name: "Percent-encoding"
     phrases:
       toward_phishing: "The URL uses percent-encoding that can hide its real content."
-      toward_legitimate: null
+      toward_legitimate: "The URL uses little or no percent-encoding."
 
   - name: has_suspicious_keyword
     type: int
@@ -165,4 +165,4 @@ features:
     human_name: "Suspicious keyword"
     phrases:
       toward_phishing: "The link mentions words like 'verify' or 'login' that phishing pages often use."
-      toward_legitimate: null
+      toward_legitimate: "The link does not use typical phishing words like 'verify', 'secure', or 'login'."
