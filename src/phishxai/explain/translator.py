@@ -93,6 +93,7 @@ def translate(feature_names: List[str],
               contributions: List[float],
               verdict: str, probability: float, threshold: float,
               top_k: int = 5, registry: Optional[Dict[str, dict]] = None,
+              feature_values: Optional[Dict[str, float]] = None,
               ) -> Translation:
     """Deterministic translation of per-feature SHAP contributions.
 
@@ -111,8 +112,21 @@ def translate(feature_names: List[str],
         direction = "toward_phishing" if c >= 0 else "toward_legitimate"
         phrase = _phrase_for(reg, name, direction)
         human = reg.get(name, {}).get("human_name", name)
+        # {value} substitution: continuous phrases must state the observed
+        # value so the sentence is faithful to the actual feature vector.
+        val = None
+        if feature_values is not None and name in feature_values:
+            val = feature_values[name]
         if phrase:
             text = phrase.replace("{feature}", "the " + human)
+            if "{value}" in text:
+                if val is None:
+                    raise ValueError(
+                        "phrase for %s needs {value} but feature_values did "
+                        "not provide it" % name)
+                if isinstance(val, float) and val.is_integer():
+                    val = int(val)
+                text = text.replace("{value}", str(val))
         else:
             text = _FALLBACKS[direction].format(name=human)
         group = next((g for g, mem in GROUPS.items() if name in mem), "other")

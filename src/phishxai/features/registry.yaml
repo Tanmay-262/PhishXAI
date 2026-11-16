@@ -1,4 +1,4 @@
-# PhishXAI feature registry v1.1 (B3 + B5 phrase enrichment)
+# PhishXAI feature registry v1.2 (B3 + B5 + B6 value-aware phrases)
 # -------------------------------
 # SINGLE SOURCE OF TRUTH for the feature extractor AND the explanation
 # translator. The order of `features` entries IS the model feature order
@@ -20,64 +20,64 @@ features:
     computation: "length of the trimmed raw URL string"
     human_name: "URL length"
     phrases:
-      toward_phishing: "The URL is very long, which is common in suspicious links."
-      toward_legitimate: "The URL is short, which lowers the model's phishing score."
+      toward_phishing: "The URL is {value} characters long, and that length pushed the model's score toward phishing."
+      toward_legitimate: "The URL is {value} characters long, which lowered the model's phishing score."
 
   - name: domain_length
     type: int
     computation: "length of the hostname without port, credentials or brackets"
     human_name: "Domain length"
     phrases:
-      toward_phishing: "The domain name is unusually long."
-      toward_legitimate: "The domain name is short, like many familiar sites, which lowers the model's phishing score."
+      toward_phishing: "The domain name is {value} characters long, which contributed to the phishing score."
+      toward_legitimate: "The domain name is {value} characters long, which lowered the model's phishing score."
 
   - name: num_dots
     type: int
     computation: "number of '.' characters in the full URL string"
     human_name: "Number of dots"
     phrases:
-      toward_phishing: "The URL contains many dots, which can fake a trustworthy domain."
-      toward_legitimate: "The URL has only a few dots, without extra subdomain layers."
+      toward_phishing: "The URL has {value} dots, which can help fake a trustworthy domain."
+      toward_legitimate: "The URL has {value} dots, without extra subdomain layers."
 
   - name: num_subdomains
     type: int
     computation: "hostname label count minus registered-domain (eTLD+1) label count, via Public Suffix List; min 0; 0 for IP hosts"
     human_name: "Number of subdomains"
     phrases:
-      toward_phishing: "The URL hides the real site deep inside many subdomains."
-      toward_legitimate: "The link sits directly on the main domain, without extra subdomains."
+      toward_phishing: "The URL nests the real site under {value} subdomain layer(s)."
+      toward_legitimate: "The link sits directly on the main domain ({value} extra subdomain layer(s))."
 
   - name: num_hyphens
     type: int
     computation: "number of '-' characters in the hostname"
     human_name: "Hyphens in the domain"
     phrases:
-      toward_phishing: "The domain uses many hyphens, a common phishing trick."
-      toward_legitimate: "The domain name has few or no hyphens."
+      toward_phishing: "The domain name uses {value} hyphen(s), a common phishing trick."
+      toward_legitimate: "The domain name uses {value} hyphen(s)."
 
   - name: num_digits
     type: int
     computation: "number of digit characters in the full URL string"
     human_name: "Digits in the URL"
     phrases:
-      toward_phishing: "The URL contains many digits, often used to disguise domains."
-      toward_legitimate: "The URL contains few or no digits."
+      toward_phishing: "The URL contains {value} digit(s), which can help disguise a domain."
+      toward_legitimate: "The URL contains {value} digit(s)."
 
   - name: digit_in_domain_ratio
     type: float
     computation: "digits in hostname / hostname length (0.0 when host is empty or an IP)"
     human_name: "Digit share of the domain"
     phrases:
-      toward_phishing: "The domain name is made up mostly of digits."
-      toward_legitimate: "The domain name is made mostly of letters, not digits."
+      toward_phishing: "The digit share of the domain is {value}, which contributed to the phishing score."
+      toward_legitimate: "The digit share of the domain is {value}, which lowered the model's phishing score."
 
   - name: num_special_chars
     type: int
     computation: "characters in the URL outside the normal set [a-zA-Z0-9 and - . _ ~ / : ? & = + % # @]"
     human_name: "Unusual special characters"
     phrases:
-      toward_phishing: "The URL contains unusual special characters."
-      toward_legitimate: "The URL has no unusual special characters."
+      toward_phishing: "The URL contains {value} unusual special character(s), which raised the model's phishing score."
+      toward_legitimate: "The URL contains {value} unusual special character(s), which lowered the model's phishing score."
 
   - name: has_ip_host
     type: int
@@ -124,8 +124,8 @@ features:
     computation: "length of the URL path component"
     human_name: "Path length"
     phrases:
-      toward_phishing: "The URL has a very long path with many folder-like parts."
-      toward_legitimate: "The URL path is short and typical for normal sites."
+      toward_phishing: "The URL path is {value} characters long, which can hide the real destination."
+      toward_legitimate: "The URL path is {value} characters long, typical of ordinary pages."
 
   - name: has_path
     type: int
@@ -140,24 +140,24 @@ features:
     computation: "length of the URL query string"
     human_name: "Query string length"
     phrases:
-      toward_phishing: "The URL carries a long query string of extra parameters."
-      toward_legitimate: "The URL carries no long query string."
+      toward_phishing: "The URL query string is {value} characters long, adding extra parameters to the phishing score."
+      toward_legitimate: "The URL query string is {value} characters long."
 
   - name: num_url_params
     type: int
     computation: "number of top-level '&' separated query parameters"
     human_name: "Number of URL parameters"
     phrases:
-      toward_phishing: "The URL stacks many parameters, which is atypical for normal pages."
-      toward_legitimate: "The URL stacks few or no extra parameters."
+      toward_phishing: "The URL stacks {value} parameters, which is atypical for normal pages and raised the phishing score."
+      toward_legitimate: "The URL stacks {value} parameters."
 
   - name: percent_encoded_count
     type: int
     computation: "count of %XX byte-encoding sequences in the URL"
     human_name: "Percent-encoding"
     phrases:
-      toward_phishing: "The URL uses percent-encoding that can hide its real content."
-      toward_legitimate: "The URL uses little or no percent-encoding."
+      toward_phishing: "The URL uses {value} percent-encoding sequence(s), which can hide its real content."
+      toward_legitimate: "The URL uses {value} percent-encoding sequence(s)."
 
   - name: has_suspicious_keyword
     type: int

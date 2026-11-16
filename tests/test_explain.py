@@ -1,4 +1,6 @@
-# B5 unit tests: SHAP explainer + translator faithfulness.
+
+# B5 unit tests: SHAP explainer + translator faithfulness (updated for
+# registry v1.2 value-aware phrases - B6 follow-up).
 # Run: .venv\Scripts\python -m pytest tests/test_explain.py -v
 # These tests verify the EXPLANATION LAYER (faithfulness, determinism,
 # coverage). Passing them proves the translator is faithful to SHAP values;
@@ -32,27 +34,28 @@ def sample(ex):
     val = pd.read_csv(ROOT / "data" / "processed" / "dataset_v1" / "val.csv")
     url = val["url"].iloc[0]
     x = extract_features_df([url]).iloc[0].to_numpy(dtype=float)
-    return ex.explain_one(url, x), url
+    vals = dict(zip(FEATURE_NAMES, x))
+    return ex.explain_one(url, x), url, vals
 
 
 # ---------------- SHAP correctness ----------------
 
 def test_additivity(ex, sample):
-    le, url = sample
+    le, url, _ = sample
     resid = abs(le.base_value + le.shap.sum() - le.decision_function)
     assert resid <= 1e-4, "SHAP additivity violated: %r" % resid
     assert resid < 1e-9, "linear SHAP should be machine-precision"
 
 
 def test_feature_alignment(ex, sample):
-    le, _ = sample
+    le, _, _ = sample
     assert list(le.feature_names) == FEATURE_NAMES
     assert len(le.shap) == 19
     assert np.isfinite(le.shap).all(), "non-finite SHAP values"
 
 
 def test_positive_class_direction(ex, sample):
-    le, url = sample
+    le, url, _ = sample
     p = le.probability
     if p >= 0.5:
         assert le.decision_function > le.base_value
@@ -61,7 +64,7 @@ def test_positive_class_direction(ex, sample):
 
 
 def test_determinism(ex, sample):
-    le, url = sample
+    le, url, _ = sample
     x = extract_features_df([url]).iloc[0].to_numpy(dtype=float)
     le2 = ex.explain_one(url, x)
     assert np.array_equal(le.shap, le2.shap)
@@ -70,7 +73,7 @@ def test_determinism(ex, sample):
 
 
 def test_top_k_signs(sample):
-    le, _ = sample
+    le, _, _ = sample
     pos = le.top_positive(5)
     neg = le.top_negative(5)
     assert all(v > 0 for _, v in pos)
@@ -81,20 +84,35 @@ def test_top_k_signs(sample):
 
 # ---------------- translator ----------------
 
+def _expected_text(reg, name, direction, vals):
+    # Mirror of translator substitution: {feature} -> "the <human_name>",
+    # {value} -> observed value (integer when integral).
+    tmpl = reg[name]["phrases"][direction]
+    text = tmpl.replace("{feature}", "the " + reg[name]["human_name"])
+    if "{value}" in text:
+        v = vals[name]
+        if isinstance(v, float) and v.is_integer():
+            v = int(v)
+        text = text.replace("{value}", str(v))
+    return text
+
+
 def test_translator_deterministic(sample):
-    le, _ = sample
+    le, _, vals = sample
+    kw = dict(top_k=5, feature_values=vals)
     t1 = translate(le.feature_names, le.shap.tolist(), le.verdict,
-                   le.probability, le.threshold, top_k=5)
+                   le.probability, le.threshold, **kw)
     t2 = translate(le.feature_names, le.shap.tolist(), le.verdict,
-                   le.probability, le.threshold, top_k=5)
+                   le.probability, le.threshold, **kw)
     assert [s.text for s in t1.sentences] == [s.text for s in t2.sentences]
     assert t1.coverage == t2.coverage
 
 
 def test_translator_directions(sample):
-    le, _ = sample
+    le, _, vals = sample
     tr = translate(le.feature_names, le.shap.tolist(), le.verdict,
-                   le.probability, le.threshold, top_k=5)
+                   le.probability, le.threshold, top_k=5,
+                   feature_values=vals)
     for s in tr.sentences:
         if s.shap_value > 0:
             assert s.direction == "toward_phishing"
@@ -103,9 +121,10 @@ def test_translator_directions(sample):
 
 
 def test_translator_top_k_ranking(sample):
-    le, _ = sample
+    le, _, vals = sample
     tr = translate(le.feature_names, le.shap.tolist(), le.verdict,
-                   le.probability, le.threshold, top_k=3)
+                   le.probability, le.threshold, top_k=3,
+                   feature_values=vals)
     assert len(tr.sentences) <= 3
     mags = [abs(s.shap_value) for s in tr.sentences]
     assert mags == sorted(mags, reverse=True)
@@ -116,8 +135,14 @@ def test_translator_zero_contributions_skipped():
     names = list(reg.keys())
     contribs = [0.0] * 19
     contribs[names.index("domain_length")] = 0.5
-    tr = translate(names, contribs, "phishing", 0.9, 0.5, top_k=5, registry=reg)
+    tr = translate(names, contribs, "phishing", 0.9, 0.5, top_k=5,
+                   registry=reg, feature_values={"domain_length": 42})
     assert [s.feature for s in tr.sentences] == ["domain_length"]
+    # v1.2 value-aware phrase must state the observed value
+    assert tr.sentences[0].text == \
+        "The domain name is 42 characters long, which contributed to " \
+        "the phishing score."
+    assert tr.coverage == 1.0
 
 
 def test_translator_empty_all_zero():
@@ -129,31 +154,48 @@ def test_translator_empty_all_zero():
 
 
 def test_translator_fallback_and_coverage():
+    # Synthetic registry isolates the fallback path deterministically,
+    # independent of the shipped registry's current phrase coverage.
+    synth = {
+        "f_known": {
+            "name": "f_known", "type": "int", "computation": "test",
+            "human_name": "Known Feature",
+            "phrases": {"toward_phishing": "The known feature raised the score.",
+                        "toward_legitimate": None},
+        },
+    }
+    tr = translate(["f_known", "f_unknown"], [1.0, 0.5], "phishing",
+                   0.9, 0.5, top_k=5, registry=synth,
+                   feature_values={"f_known": 1})
+    assert len(tr.sentences) == 2
+    known = next(s for s in tr.sentences if s.feature == "f_known")
+    unknown = next(s for s in tr.sentences if s.feature == "f_unknown")
+    assert not known.is_fallback
+    assert unknown.is_fallback
+    assert tr.coverage == 0.5, "1 of 2 sentences from registry phrases"
+
+
+def test_value_phrase_fails_closed_without_value():
+    # A value-aware phrase must NOT be silently emitted without its value.
     reg = load_registry()
     names = list(reg.keys())
-    nulls = [n for n in names if reg[n]["phrases"]["toward_phishing"] is None]
-    target = nulls[0] if nulls else "domain_length"
     contribs = [0.0] * 19
-    contribs[names.index(target)] = 1.0
-    tr = translate(names, contribs, "phishing", 0.9, 0.5, top_k=5, registry=reg)
-    assert len(tr.sentences) == 1
-    if nulls:
-        assert tr.sentences[0].is_fallback
-        assert tr.coverage == 0.0
-    else:
-        assert tr.coverage == 1.0
+    contribs[names.index("url_length")] = 1.0
+    with pytest.raises(ValueError):
+        translate(names, contribs, "phishing", 0.9, 0.5, top_k=5,
+                  registry=reg)  # no feature_values -> fail closed
 
 
 def test_translator_no_fabricated_text(sample):
-    le, _ = sample
+    le, _, vals = sample
     reg = load_registry()
     tr = translate(le.feature_names, le.shap.tolist(), le.verdict,
-                   le.probability, le.threshold, top_k=5, registry=reg)
+                   le.probability, le.threshold, top_k=5, registry=reg,
+                   feature_values=vals)
     for s in tr.sentences:
         assert s.feature in reg, "sentence references an unknown feature"
         if not s.is_fallback:
-            tmpl = reg[s.feature]["phrases"][s.direction]
-            expected = tmpl.replace("{feature}", "the " + reg[s.feature]["human_name"])
+            expected = _expected_text(reg, s.feature, s.direction, vals)
             assert s.text == expected, "sentence deviates from registry phrase"
 
 

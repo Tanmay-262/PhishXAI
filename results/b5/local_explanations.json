@@ -55,10 +55,10 @@
       ],
       "sentences": [
         "The URL has no HTTPS encryption, which the model weighs toward phishing.",
-        "The domain name is unusually long.",
-        "The domain uses many hyphens, a common phishing trick.",
-        "The URL contains many digits, often used to disguise domains.",
-        "The domain name is made up mostly of digits."
+        "The domain name is 44 characters long, which contributed to the phishing score.",
+        "The domain name uses 7 hyphen(s), a common phishing trick.",
+        "The URL contains 15 digit(s), which can help disguise a domain.",
+        "The digit share of the domain is 0.3409090909090909, which contributed to the phishing score."
       ],
       "coverage_top5": 1.0,
       "grouped_concepts": [
@@ -151,10 +151,10 @@
         ]
       ],
       "sentences": [
-        "The domain name is short, like many familiar sites, which lowers the model's phishing score.",
-        "The URL is short, which lowers the model's phishing score.",
-        "The URL has only a few dots, without extra subdomain layers.",
-        "The domain name has few or no hyphens.",
+        "The domain name is 8 characters long, which lowered the model's phishing score.",
+        "The URL is 25 characters long, which lowered the model's phishing score.",
+        "The URL has 1 dots, without extra subdomain layers.",
+        "The domain name uses 0 hyphen(s).",
         "The site uses HTTPS encryption, which the model weighs toward legitimate."
       ],
       "coverage_top5": 1.0,
@@ -252,10 +252,10 @@
         ]
       ],
       "sentences": [
-        "The URL has only a few dots, without extra subdomain layers.",
-        "The URL is short, which lowers the model's phishing score.",
-        "The domain name is short, like many familiar sites, which lowers the model's phishing score.",
-        "The domain name has few or no hyphens.",
+        "The URL has 1 dots, without extra subdomain layers.",
+        "The URL is 27 characters long, which lowered the model's phishing score.",
+        "The domain name is 18 characters long, which lowered the model's phishing score.",
+        "The domain name uses 0 hyphen(s).",
         "The link includes a long path that can fake a trusted page."
       ],
       "coverage_top5": 1.0,
@@ -349,10 +349,10 @@
         ]
       ],
       "sentences": [
-        "The URL contains many dots, which can fake a trustworthy domain.",
-        "The domain name is short, like many familiar sites, which lowers the model's phishing score.",
-        "The domain name has few or no hyphens.",
-        "The URL is short, which lowers the model's phishing score.",
+        "The URL has 3 dots, which can help fake a trustworthy domain.",
+        "The domain name is 12 characters long, which lowered the model's phishing score.",
+        "The domain name uses 0 hyphen(s).",
+        "The URL is 36 characters long, which lowered the model's phishing score.",
         "The site uses HTTPS encryption, which the model weighs toward legitimate."
       ],
       "coverage_top5": 1.0,

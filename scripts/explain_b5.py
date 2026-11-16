@@ -89,8 +89,10 @@ print("summary plot -> results/b5/shap_summary_val.png")
 def case(url, x_row, note):
     le = expl.explain_one(url, x_row)
     reg = load_registry()
+    vals = dict(zip(le.feature_names, x_row.tolist()))
     tr = translate(le.feature_names, le.shap.tolist(), le.verdict,
-                   le.probability, le.threshold, top_k=5, registry=reg)
+                   le.probability, le.threshold, top_k=5, registry=reg,
+                   feature_values=vals)
     return {"url": url, "note": note, "verdict": le.verdict,
             "probability": round(le.probability, 6), "threshold": le.threshold,
             "base_value": round(le.base_value, 6),
@@ -147,9 +149,11 @@ for c in cases:
 # ---- 5) coverage on all val rows (top-5) ----
 covs = []
 for i in range(len(Xva)):
-    le = expl.explain_one(val["url"].iloc[i], Xva.iloc[i].to_numpy(dtype=float))
+    xrow = Xva.iloc[i].to_numpy(dtype=float)
+    le = expl.explain_one(val["url"].iloc[i], xrow)
     tr = translate(le.feature_names, le.shap.tolist(), le.verdict,
-                   le.probability, le.threshold, top_k=5)
+                   le.probability, le.threshold, top_k=5,
+                   feature_values=dict(zip(le.feature_names, xrow.tolist())))
     covs.append(tr.coverage)
 covs = np.array(covs)
 (OUT / "coverage_val.json").write_text(json.dumps(
