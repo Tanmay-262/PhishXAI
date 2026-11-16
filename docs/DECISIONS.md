@@ -11,3 +11,6 @@
 
 - [ ] B2: final dataset sources + counts (user approval gate)
 - [ ] B4: model selection metric (default: highest PR-AUC, tie-break F1)
+
+| 2026-11-17 | Registry = 19 features (target was ~15) | Correctness + coverage of user-required edge cases (IP, ports, @, encoding, keywords) mattered more than hitting 15 | Drop to 15 (would lose edge-case features) |
+| 2026-11-17 | PSL bundled at src/phishxai/features/assets/ (CC0, 341 KB) | Fresh clone must reproduce extraction without gitignored data/raw; PSL is reference data, not a dataset | Point at data/raw only (fresh clone breaks) |

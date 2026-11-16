@@ -1,30 +1,34 @@
 # PhishXAI - Project Status
 
-**Current phase:** B2 complete. Awaiting user approval to start B3.
+**Current phase:** B3 complete. Awaiting user approval to start B4.
 
 ## Completed
 
-- [x] B1: git repo, venv (Py 3.14, gate passed), full stack, repro check, commits 4bec1aa + ec47978
-- [x] B2: downloaded OpenPhish feed (300 URLs), Tranco JZWZY top-10k, PSL;
-      builder script produced dataset_v1 (600 rows, domain-grouped 80/10/10,
-      zero registered-domain overlap, constructed URLs flagged); provenance
-      written to docs/DATASET_PROVENANCE.md
+- [x] B1: repo, venv (Py 3.14), stack, repro check, commits 4bec1aa + ec47978
+- [x] B2: dataset_v1 (600 rows, domain-grouped 80/10/10, leakage-verified), commit 6435315
+- [x] B3: feature registry v1 (19 lexical features, YAML single source of truth),
+      PSL-based extractor (no network, deterministic), 15 unit tests passing,
+      path-artifact diagnostic on val split (path-only PR-AUC 0.8007 vs full 0.9963)
 
 ## Pending
 
-- [ ] B3: lexical feature extraction + registry
-- [ ] B4: train & evaluate baseline classifier (user approval gate after)
+- [ ] B4: train & evaluate baseline classifier (LR/RF/XGBoost, val for selection;
+      test set held out until final evaluation) - user approval gate
 - [ ] B5: SHAP local explanations + template translator
 - [ ] B6: minimal Streamlit dashboard
 - [ ] B7: docs, tests, final commit
 
 ## Known issues
 
-- matplotlib font-cache warning (harmless).
-- Tranco legacy top-10k URL 404s; current per-list-ID endpoint used instead.
-- Legit side is fully constructed (0 observed URLs) - documented limitation.
-- val/test splits are thin (61 / 60 rows) - report uncertainty honestly.
+- High feature collinearity: url_length/domain_length (0.80),
+  domain_length/num_hyphens (0.84), query_length/num_url_params (0.92) -
+  will split SHAP credit; flagged for B5 global SHAP review.
+- Legit side is constructed (B2 disclosure); path-only diagnostic model
+  scores 0.80 PR-AUC, so the full model's 0.9963 must be defended as
+  "domain-length driven, not path-presence driven".
+- PSL shipped as src asset (CC0, 341 KB) so fresh clones work without data/raw.
 
 ## Next actions
 
-- User reviews B2 numbers -> approval -> B3 (registry + extractor + unit tests).
+- User approves B3 numbers -> B4: baseline training on train, select on val,
+  ONE final test evaluation per model, honest metrics + artifact.
