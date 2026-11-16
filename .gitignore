@@ -1,0 +1,17 @@
+# Python
+.venv/
+.venv_repro_test/
+__pycache__/
+*.pyc
+
+# Data (raw and processed data never committed)
+data/
+
+# Model artifacts (regenerated, not committed by default)
+artifacts/
+
+# OS / editor noise
+.DS_Store
+Thumbs.db
+*.log
+.vscode/
