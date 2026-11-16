@@ -1,34 +1,35 @@
 # PhishXAI - Project Status
 
-**Current phase:** B3 complete. Awaiting user approval to start B4.
+**Current phase:** B4 complete. Awaiting user approval to start B5.
 
 ## Completed
 
-- [x] B1: repo, venv (Py 3.14), stack, repro check, commits 4bec1aa + ec47978
-- [x] B2: dataset_v1 (600 rows, domain-grouped 80/10/10, leakage-verified), commit 6435315
-- [x] B3: feature registry v1 (19 lexical features, YAML single source of truth),
-      PSL-based extractor (no network, deterministic), 15 unit tests passing,
-      path-artifact diagnostic on val split (path-only PR-AUC 0.8007 vs full 0.9963)
+- [x] B1: repo, venv (Py 3.14), stack, repro check
+- [x] B2: dataset_v1 (600 rows, domain-grouped 80/10/10, leakage-verified)
+- [x] B3: registry v1 (19 lexical features), PSL extractor, 15 unit tests,
+      path-artifact diagnostic on val
+- [x] B4: LR/RF/XGB trained on train; thresholds from val F1; lr_v1 selected
+      (val PR-AUC 0.9991, decision recorded pre-test); test evaluated once;
+      bundles saved + fresh-process verified; error analysis done
 
 ## Pending
 
-- [ ] B4: train & evaluate baseline classifier (LR/RF/XGBoost, val for selection;
-      test set held out until final evaluation) - user approval gate
-- [ ] B5: SHAP local explanations + template translator
+- [ ] B5: SHAP local explanations + template translator (needs user approval)
 - [ ] B6: minimal Streamlit dashboard
 - [ ] B7: docs, tests, final commit
 
-## Known issues
+## Known issues / limitations
 
-- High feature collinearity: url_length/domain_length (0.80),
-  domain_length/num_hyphens (0.84), query_length/num_url_params (0.92) -
-  will split SHAP credit; flagged for B5 global SHAP review.
-- Legit side is constructed (B2 disclosure); path-only diagnostic model
-  scores 0.80 PR-AUC, so the full model's 0.9963 must be defended as
-  "domain-length driven, not path-presence driven".
-- PSL shipped as src asset (CC0, 341 KB) so fresh clones work without data/raw.
+- Legit side fully constructed (B2); 1 FP is a constructed shopee URL -
+  expected artifact, documented.
+- Shared test FN uspostaldirect[.]com (bare-domain phishing) - all 3 models
+  miss it; likely over-reliance on popular-domain/short-domain cues.
+- val n=61 / test n=60: per-metric differences below ~5 points are not
+  statistically meaningful; selection rule is a documented tiebreak, not
+  a tight test.
+- No probability calibration (deadline scoping); raw probabilities used.
 
 ## Next actions
 
-- User approves B3 numbers -> B4: baseline training on train, select on val,
-  ONE final test evaluation per model, honest metrics + artifact.
+- User approves B4 -> B5: TreeSHAP on lr_v1 (selected) + translator +
+      faithfulness tests.
