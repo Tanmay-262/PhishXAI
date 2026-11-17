@@ -58,3 +58,17 @@ meaningful test set at this data size.
    verified.
 4. PSL: 8 exception (`!`) rules ignored - negligible effect on top-10k.
 5. Single-point-in-time feed; phishing URLs may be dead links now.
+
+## License and attribution confirmation (B7)
+
+- **Public Suffix List** (public_suffix_list.dat): CC0 1.0 Universal
+  (public domain dedication), https://creativecommons.org/publicdomain/zero/1.0/.
+  A CC0 copy is shipped at src/phishxai/features/assets/ so a fresh clone
+  can extract features without the gitignored data/raw files. Attribution:
+  "Public Suffix List (publicsuffix.org), CC0, retrieved 2026-11-17."
+- **Tranco list** (list ID JZWZY): CC-BY, https://tranco-list.eu (daily
+  updated; CUltra + Cloudflare Radar sources). Used as a legitimate-domain
+  source only; constructed URLs are flagged, not crawled.
+- **OpenPhish feed**: free community feed (openphish.com/feed.txt); URLs
+  are reported phishing sightings. Text-only inspection, never fetched or
+  executed.

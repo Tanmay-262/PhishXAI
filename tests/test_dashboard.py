@@ -40,15 +40,18 @@ def dc():
     return DashboardCore("lr_v1")
 
 
-@pytest.fixture(autouse=True)
+@pytest.fixture
 def no_network(monkeypatch):
+    # Apply per-test (NOT autouse): Streamlit's AppTest session machinery
+    # needs the normal socket environment; the no-network guarantee for
+    # submitted URLs is proven on the direct dc.analyze() code paths.
     monkeypatch.setattr(socket, "socket", DenyNetwork)
     monkeypatch.setattr(socket, "create_connection",
                         lambda *a, **k: (_ for _ in ()).throw(
                             RuntimeError("NETWORK ATTEMPTED")))
 
 
-def test_model_prediction_matches_b4(dc):
+def test_model_prediction_matches_b4(dc, no_network):
     # The B4 prediction CSVs recorded probabilities; the core must
     # reproduce them exactly for the same URLs.
     b4 = pd.read_csv(ROOT / "artifacts" / "predictions" / "lr_v1_val.csv")
@@ -60,7 +63,7 @@ def test_model_prediction_matches_b4(dc):
                                 else "legitimate")
 
 
-def test_known_phishing_val_url(dc):
+def test_known_phishing_val_url(dc, no_network):
     val = pd.read_csv(ROOT / "data" / "processed" / "dataset_v1" / "val.csv")
     ph = val[val["label"] == "phishing"].iloc[0]
     r = dc.analyze(ph["url"])
@@ -69,7 +72,7 @@ def test_known_phishing_val_url(dc):
     assert r["url_defanged"].startswith("hxxp") or "[.]" in r["url_defanged"]
 
 
-def test_known_legit_val_url(dc):
+def test_known_legit_val_url(dc, no_network):
     val = pd.read_csv(ROOT / "data" / "processed" / "dataset_v1" / "val.csv")
     lg = val[val["label"] == "legitimate"].iloc[0]
     r = dc.analyze(lg["url"])
@@ -77,13 +80,13 @@ def test_known_legit_val_url(dc):
     assert r["probability"] < 0.5
 
 
-def test_bare_domain_false_negative(dc):
+def test_bare_domain_false_negative(dc, no_network):
     r = dc.analyze("https://uspostaldirect.com/")
     assert r["verdict"] == "legitimate"   # the documented B4 FN
     assert r["probability"] < dc.threshold
 
 
-def test_constructed_legit_false_positive(dc):
+def test_constructed_legit_false_positive(dc, no_network):
     test = pd.read_csv(ROOT / "data" / "processed" / "dataset_v1" / "test.csv")
     mask = test["url"].str.contains("shopee.co.id/images/hero", regex=False)
     assert mask.any(), "B4 false-positive URL missing from test set"
@@ -92,7 +95,7 @@ def test_constructed_legit_false_positive(dc):
     assert r["probability"] > dc.threshold
 
 
-def test_empty_and_malformed_inputs(dc):
+def test_empty_and_malformed_inputs(dc, no_network):
     for bad in ("", "   ", "not a url", "://x", "javascript:alert(1)"):
         r = dc.analyze(bad)
         assert set(r.keys()) >= {"verdict", "probability", "shap",
@@ -101,12 +104,12 @@ def test_empty_and_malformed_inputs(dc):
         assert 0.0 <= r["probability"] <= 1.0
 
 
-def test_additivity_within_tolerance(dc):
+def test_additivity_within_tolerance(dc, no_network):
     r = dc.analyze("https://shopee.co.id/images/hero.png")
     assert r["additivity_residual"] <= 1e-4
 
 
-def test_explanation_matches_contributions(dc):
+def test_explanation_matches_contributions(dc, no_network):
     r = dc.analyze("https://shopee.co.id/images/hero.png")
     # top-5 sentences must correspond to the top-5 |contribution| features
     top5 = sorted(zip(FEATURE_NAMES, r["shap"]),
@@ -119,7 +122,7 @@ def test_explanation_matches_contributions(dc):
             "a top-5 feature is missing from the explanation"
 
 
-def test_no_network_used(dc):
+def test_no_network_used(dc, no_network):
     # autouse fixture has sockets denied for the whole module; every
     # analysis above completing without error is the proof.
     r = dc.analyze("https://example.com/")
@@ -135,3 +138,25 @@ def test_app_module_imports():
     mod = importlib.util.module_from_spec(spec)
     spec.loader.exec_module(mod)
     assert mod is not None
+
+
+def test_apptest_interaction_analyze():
+    """AppTest: enter a URL and click Analyze; the page must render the
+    verdict without exceptions and display the defanged URL."""
+    from streamlit.testing.v1 import AppTest
+    at = AppTest.from_file(str(ROOT / "app" / "streamlit_app.py"),
+                           default_timeout=90)
+    at.run()
+    assert len(at.exception) == 0, "app failed to boot"
+    # find the Analyze button and the url text input
+    btn = next((b for b in at.button if "Analyze" in b.label), None)
+    assert btn is not None, "Analyze button not found"
+    at.text_input(key="url_input").set_value("https://example.com/verify-account")
+    btn.click()
+    at.run()
+    assert len(at.exception) == 0, "Analyze click raised an exception"
+    # the verdict banner must have appeared
+    joined = " ".join(str(e.value) for e in at.success) + " ".join(
+        str(e.value) for e in at.error)
+    assert "phishing" in joined or "legitimate" in joined, \
+        "no verdict banner after Analyze click"

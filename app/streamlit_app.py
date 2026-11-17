@@ -65,8 +65,11 @@ with tab_det:
                 st.session_state.last_analysis = r
                 v = r["verdict"]
                 color = ":red-background" if v == "phishing" else ":green-background"
-                st.success if v == "legitimate" else st.error(
-                    f"Predicted: **{v}**")
+                if v == "legitimate":
+                    st.success(f"Predicted: **{v}** (reduced phishing signals - "
+                               f"not a safety guarantee)")
+                else:
+                    st.error(f"Predicted: **{v}**")
                 st.markdown(f"URL shown (defanged, do not click): "
                             f"`{r['url_defanged']}`")
                 st.markdown(f"Phishing probability: **{r['probability']:.4f}**  "
