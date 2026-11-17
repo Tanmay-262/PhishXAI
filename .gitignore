@@ -8,7 +8,21 @@ __pycache__/
 data/
 
 # Model artifacts (regenerated, not committed by default)
-artifacts/
+artifacts/*
+
+# Deploy exception (documented): commit the three files the
+ # Streamlit dashboard needs to serve the B4-selected lr_v1 model,
+ # so the public repo deploys the exact B7 repro snapshot. All other
+ # generated files (rf/xgb bundles, prediction CSVs, data/) stay
+ # ignored; raw/processed data with observed phishing URLs is never
+ # committed (the dashboard SHAP zero-background fallback is
+ # mathematically identical for the scaled linear model).
+!artifacts/models/
+artifacts/models/*
+!artifacts/models/lr_v1.pkl
+!artifacts/b4_summary.json
+!artifacts/selection_decision.json
+
 
 # OS / editor noise
 .DS_Store

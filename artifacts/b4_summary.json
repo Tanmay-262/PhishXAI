@@ -1,0 +1,172 @@
+{
+  "selection": {
+    "selected_model": "lr_v1",
+    "rule": "highest val PR-AUC; tie-break: val F1 at its selected threshold",
+    "val_results": {
+      "lr_v1": {
+        "threshold": 0.2994,
+        "accuracy": 0.9836,
+        "precision": 0.9706,
+        "recall": 1.0,
+        "f1": 0.9851,
+        "fpr": 0.0357,
+        "tn": 27,
+        "fp": 1,
+        "fn": 0,
+        "tp": 33,
+        "n_samples": 61,
+        "n_phishing": 33,
+        "n_legitimate": 28,
+        "pr_auc": 0.9991,
+        "val_pr_auc_rank": 1
+      },
+      "rf_v1": {
+        "threshold": 0.45,
+        "accuracy": 0.9672,
+        "precision": 0.9429,
+        "recall": 1.0,
+        "f1": 0.9706,
+        "fpr": 0.0714,
+        "tn": 26,
+        "fp": 2,
+        "fn": 0,
+        "tp": 33,
+        "n_samples": 61,
+        "n_phishing": 33,
+        "n_legitimate": 28,
+        "pr_auc": 0.9955,
+        "val_pr_auc_rank": 2
+      },
+      "xgb_v1": {
+        "threshold": 0.3424,
+        "accuracy": 0.9672,
+        "precision": 0.9429,
+        "recall": 1.0,
+        "f1": 0.9706,
+        "fpr": 0.0714,
+        "tn": 26,
+        "fp": 2,
+        "fn": 0,
+        "tp": 33,
+        "n_samples": 61,
+        "n_phishing": 33,
+        "n_legitimate": 28,
+        "pr_auc": 0.9937,
+        "val_pr_auc_rank": 3
+      }
+    },
+    "ranking": [
+      "lr_v1",
+      "rf_v1",
+      "xgb_v1"
+    ],
+    "recorded_at_utc": "2026-11-16T21:59:26+00:00",
+    "note": "Recorded before any test-set access. Test metrics below are final-report-only; they informed no decision. B7 clean-environment re-run re-derived the identical selection (same rule/ranking/val metrics); re-verification timestamp kept in b7_reverified_at_utc, original B4 timestamp preserved.",
+    "caveat": "val n=61 and test n=60: differences of a few metric points are within uncertainty; the rule is a documented decision, not a statistically tight comparison.",
+    "b7_reverified_at_utc": "2026-11-17T05:53:33+00:00"
+  },
+  "test": {
+    "lr_v1": {
+      "threshold": 0.2994,
+      "accuracy": 0.9667,
+      "precision": 0.9655,
+      "recall": 0.9655,
+      "f1": 0.9655,
+      "fpr": 0.0323,
+      "tn": 30,
+      "fp": 1,
+      "fn": 1,
+      "tp": 28,
+      "n_samples": 60,
+      "n_phishing": 29,
+      "n_legitimate": 31,
+      "pr_auc": 0.9937
+    },
+    "rf_v1": {
+      "threshold": 0.45,
+      "accuracy": 0.9833,
+      "precision": 1.0,
+      "recall": 0.9655,
+      "f1": 0.9825,
+      "fpr": 0.0,
+      "tn": 31,
+      "fp": 0,
+      "fn": 1,
+      "tp": 28,
+      "n_samples": 60,
+      "n_phishing": 29,
+      "n_legitimate": 31,
+      "pr_auc": 0.9958
+    },
+    "xgb_v1": {
+      "threshold": 0.3424,
+      "accuracy": 0.9833,
+      "precision": 1.0,
+      "recall": 0.9655,
+      "f1": 0.9825,
+      "fpr": 0.0,
+      "tn": 31,
+      "fp": 0,
+      "fn": 1,
+      "tp": 28,
+      "n_samples": 60,
+      "n_phishing": 29,
+      "n_legitimate": 31,
+      "pr_auc": 0.9989
+    }
+  },
+  "errors": {
+    "lr_v1_val": {
+      "false_positives": 1,
+      "false_negatives": 0,
+      "fp_examples": [
+        "https://t-s1-msedge[.]net/blog/2026/ann..."
+      ],
+      "fn_examples": []
+    },
+    "lr_v1_test": {
+      "false_positives": 1,
+      "false_negatives": 1,
+      "fp_examples": [
+        "https://shopee[.]co[.]id/images/hero[.]png"
+      ],
+      "fn_examples": [
+        "https://uspostaldirect[.]com/"
+      ]
+    },
+    "rf_v1_val": {
+      "false_positives": 2,
+      "false_negatives": 0,
+      "fp_examples": [
+        "https://youtube-nocookie[.]com/",
+        "https://t-s1-msedge[.]net/blog/2026/ann..."
+      ],
+      "fn_examples": []
+    },
+    "rf_v1_test": {
+      "false_positives": 0,
+      "false_negatives": 1,
+      "fp_examples": [],
+      "fn_examples": [
+        "https://uspostaldirect[.]com/"
+      ]
+    },
+    "xgb_v1_val": {
+      "false_positives": 2,
+      "false_negatives": 0,
+      "fp_examples": [
+        "https://youtube-nocookie[.]com/",
+        "https://t-s1-msedge[.]net/blog/2026/ann..."
+      ],
+      "fn_examples": []
+    },
+    "xgb_v1_test": {
+      "false_positives": 0,
+      "false_negatives": 1,
+      "fp_examples": [],
+      "fn_examples": [
+        "https://uspostaldirect[.]com/"
+      ]
+    }
+  }
+}
