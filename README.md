@@ -7,8 +7,9 @@ plain-language reasons.
 ## Status
 
 Emergency MVP build targeting the 2026-11-18 submission deadline. See
-docs/PROJECT_STATUS.md for phase progress. B6 (Streamlit dashboard) is
-complete; B7 (docs/final sweep) is next.
+docs/PROJECT_STATUS.md for phase progress. All MVP blocks (B1-B7) are
+complete; submission readiness is documented in results/FINAL_RESULTS.md
+and results/VIVA_PREP.md.
 
 ## Reproducing everything from this machine
 
