@@ -10,6 +10,7 @@ No network access: submitted URLs are never fetched, visited or resolved.
 """
 import re
 import sys
+import time
 from pathlib import Path
 
 import pandas as pd
@@ -19,7 +20,7 @@ import streamlit as st
 ROOT = Path(__file__).resolve().parents[1]
 sys.path.insert(0, str(ROOT / "src"))
 
-from phishxai.dashboard_core import DashboardCore, MissingArtifactError  # noqa: E402
+from phishxai.dashboard_core import (DashboardCore, defang, MissingArtifactError)  # noqa: E402
 from phishxai.features.extractor import FEATURE_NAMES  # noqa: E402
 
 st.set_page_config(page_title="PhishXAI", page_icon=":lock:", layout="wide")
@@ -61,6 +62,12 @@ with tab_det:
                 st.error(f"Unsupported URL scheme ('{bad.group(1)}'). "
                          "Enter an http/https or bare URL.")
             else:
+                # Presentation-layer pause (demo polish): a short,
+                # clearly labelled analyzing moment so the result does not
+                # flash on instantly. Purely cosmetic - it does not change
+                # any model output, and the URL is never fetched.
+                with st.spinner(f"Analyzing {defang(u)} ..."):
+                    time.sleep(1.5)
                 r = core_model.analyze(u)
                 st.session_state.last_analysis = r
                 v = r["verdict"]
