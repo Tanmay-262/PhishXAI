@@ -47,3 +47,18 @@ Python 3.14.0 verified; stack pinned in requirements.txt.
 - Legitimate class is 100% synthetically constructed (disclosed in
   docs/DATASET_PROVENANCE.md and results/error_analysis_b4.md).
 - FastAPI layer and the human user study are deferred (deadline scoping).
+
+## Live deployment
+
+The dashboard is deployed on Streamlit Community Cloud:
+
+    https://phishxai.streamlit.app/
+
+Verified live 2026-11-18. The Cloud project builds from this repository;
+the model bundle and the recorded B4/selection artifacts are tracked in-repo
+for the deploy (documented .gitignore exception), and the dashboard uses the
+zero-mean SHAP background fallback when data/processed is absent (identical
+for the scaled linear model). Free plan - the app sleeps when idle, so open
+the URL once before a demo to warm it up. Note the deployed build may trail
+later commits of this repository; check the commit the Cloud project is pinned
+to before demoing.

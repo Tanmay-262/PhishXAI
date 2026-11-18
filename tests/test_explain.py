@@ -223,6 +223,45 @@ def test_group_concepts_cover_all_features():
     assert all(g["signed_sum"] is not None for g in groups)
 
 
+
+
+def test_binary_flag_phrases_agree_with_value():
+    """No sentence may assert the opposite value of a binary flag.
+
+    For a linear model the observed value of a binary feature is pinned by the
+    sign of its contribution (phi = coef*(v-mean)/scale). Walk every has_*
+    feature at both values and assert the emitted sentence states the observed
+    value. Regression for the has_path defect: the pre-v1.3 phrase
+"includes a long path" was emitted for has_path=0.
+    """
+    bundle = joblib.load(ROOT / "artifacts" / "models" / "lr_v1.pkl")
+    clf = bundle["estimator"].named_steps["clf"]
+    sc = bundle["estimator"].named_steps["scaler"]
+    reg = load_registry()
+    names = bundle["feature_names"]
+    agree = {
+        "has_path": {0: "has_path flag is 0", 1: "has_path flag is 1"},
+        "has_shortener": {0: "shortening-service flag is 0", 1: "shortening-service flag is 1"},
+        "has_https": {0: "no HTTPS", 1: "uses HTTPS"},
+        "has_ip_host": {0: "ordinary domain", 1: "raw IP address"},
+        "has_port": {0: "No unusual port", 1: "unusual port"},
+        "has_at_symbol": {0: "no @ symbol", 1: "@ symbol"},
+        "has_suspicious_keyword": {0: "does not use typical phishing words", 1: "mentions words like"},
+    }
+    checked = 0
+    for name in [n for n in names if n in agree]:
+        i = names.index(name)
+        coef = float(clf.coef_[0][i]); mean = float(sc.mean_[i]); scale = float(sc.scale_[i])
+        for v in (0, 1):
+            contrib = coef * (v - mean) / scale
+            if abs(contrib) < 1e-9: continue
+            contribs = [0.0] * len(names); contribs[i] = contrib
+            tr = translate(names, contribs, "phishing", 0.5, 0.5, top_k=5, registry=reg, feature_values={name: v})
+            s = next((s for s in tr.sentences if s.feature == name), None)
+            assert s is not None, name + ": no sentence for nonzero contribution"
+            assert agree[name][v] in s.text, (name, v, s.text)
+            checked += 1
+    assert checked >= 6, "expected >= 6 flag/value checks, got %d" % checked
 def test_translation_pass_is_not_model_validation():
     reg = load_registry()
     tr = translate(list(reg.keys()), [0.0] * 19, "phishing", 0.99, 0.5,

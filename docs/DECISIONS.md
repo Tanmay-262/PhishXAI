@@ -9,8 +9,8 @@
 
 ## Open decisions
 
-- [ ] B2: final dataset sources + counts (user approval gate)
-- [ ] B4: model selection metric (default: highest PR-AUC, tie-break F1)
+- [x] B2: final dataset sources + counts - RESOLVED: dataset_v1 (OpenPhish observed + Tranco constructed, 600 rows, domain-grouped 80/10/10) approved at the B2 checkpoint; counts in docs/DATASET_PROVENANCE.md
+- [x] B4: model selection metric - RESOLVED: highest val PR-AUC with tie-break val F1; lr_v1 selected pre-test (artifacts/selection_decision.json, recorded 2026-11-16T21:59:26Z)
 
 | 2026-11-17 | Registry = 19 features (target was ~15) | Correctness + coverage of user-required edge cases (IP, ports, @, encoding, keywords) mattered more than hitting 15 | Drop to 15 (would lose edge-case features) |
 | 2026-11-17 | PSL bundled at src/phishxai/features/assets/ (CC0, 341 KB) | Fresh clone must reproduce extraction without gitignored data/raw; PSL is reference data, not a dataset | Point at data/raw only (fresh clone breaks) |

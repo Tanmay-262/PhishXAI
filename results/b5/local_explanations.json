@@ -256,7 +256,7 @@
         "The URL is 27 characters long, which lowered the model's phishing score.",
         "The domain name is 18 characters long, which lowered the model's phishing score.",
         "The domain name uses 0 hyphen(s).",
-        "The link includes a long path that can fake a trusted page."
+        "The URL's has_path flag is 0 (1 = has a path beyond just '/'), which pushed the model's score toward phishing."
       ],
       "coverage_top5": 1.0,
       "grouped_concepts": [

@@ -20,7 +20,7 @@ them for the report and viva.
 
 ## 2. Features
 
-19 lexical features (registry v1.2) extracted from the URL string only;
+19 lexical features (registry v1.3) extracted from the URL string only;
 PSL-based registered-domain computation; no network, no dataset metadata
 used as model inputs. Known collinear pairs (from B3):
 url_length<->domain_length, num_dots<->num_subdomains,
@@ -70,7 +70,7 @@ protocol. This is a documented, reproducible decision boundary.
   num_subdomains (0.6192) > num_digits (0.4885) > digit_in_domain_ratio
   (0.3982) - mean |SHAP|; all 19 retained; grouped presentation concepts
   provided alongside raw values.
-- Top-5 explanation coverage on val: 100% (61/61) with registry v1.2
+- Top-5 explanation coverage on val: 100% (61/61) with registry v1.3
   value-aware phrases.
 - Documented cases: the bare-domain false negative uspostaldirect[.]com
   (p=0.0732) and the constructed-URL false positive
@@ -85,7 +85,20 @@ tests), Explainability (log-odds SHAP chart + sentences + grouped
 concepts + additivity line), Model Performance (val/test shown
 separately with the pre-test selection decision and the limitations
 block). Verified: headless boot HTTP 200; AppTest full-script run 0
-exceptions; 10/10 dashboard tests.
+exceptions; 10/10 dashboard tests at B6 (the AppTest click-through test was
+added at B7, so the current suite is 11/11 dashboard tests, 43/43 overall).
+
+## 6b. Registry v1.3 (post-B7 phrase-only fix)
+
+The explanation registry was moved to v1.3: has_path and has_shortener
+were made value-aware so their sentences always agree with the observed
+flag (a sign-of-SHAP selection can otherwise emit a sentence that
+contradicts the value - e.g. the old phrase 'includes a long path' was
+shown for the bare-domain uspostaldirect[.]com false negative, reuters[.]com
+and cdc[.]gov). This is a phrase-only change: feature names/order, the
+trained lr_v1 model and every numeric result in this file are unchanged;
+the B5 outputs were regenerated and diffed (only that one sentence text
+changed; coverage 100% and additivity identical).
 
 ## 7. Limitations (report-ready)
 

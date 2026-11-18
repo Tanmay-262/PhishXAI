@@ -39,6 +39,6 @@ user's final review of this report). No further blocks are scheduled.
 ## Next actions
 
 - User final review of this B7 report.
-- Optional pre-submission: GitHub push (requires user approval), demo
-  rehearsal (results/VIVA_PREP.md section 4), report writing from
+- GitHub push done; remote main tracks the deploy-artifact commit d740e89 and the Streamlit Cloud deployment is live at https://phishxai.streamlit.app (see README).
+- Optional pre-submission: demo rehearsal (results/VIVA_PREP.md section 4), report writing from
   results/FINAL_RESULTS.md.

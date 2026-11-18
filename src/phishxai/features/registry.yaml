@@ -1,4 +1,4 @@
-# PhishXAI feature registry v1.2 (B3 + B5 + B6 value-aware phrases)
+# PhishXAI feature registry v1.3 (B3 + B5 + B6 value-aware phrases; has_path and has_shortener made value-aware so their sentences always agree with the observed flag - a phrase-only change, model unchanged)
 # -------------------------------
 # SINGLE SOURCE OF TRUTH for the feature extractor AND the explanation
 # translator. The order of `features` entries IS the model feature order
@@ -116,8 +116,8 @@ features:
     computation: "1 if registered domain is in the static shortener list (bit.ly, tinyurl.com, goo.gl, t.co, is.gd, ow.ly, buff.ly, cutt.ly, cutt.us, rebrand.ly, shrinkurl.com), else 0"
     human_name: "URL shortening service"
     phrases:
-      toward_phishing: "The link uses a URL shortening service, hiding where it really goes."
-      toward_legitimate: "The link is not from a URL shortening service."
+      toward_phishing: "The URL's shortening-service flag is {value} (1 = a known shortener), which pushed the model's score toward phishing."
+      toward_legitimate: "The URL's shortening-service flag is {value} (1 = a known shortener), which lowered the model's phishing score."
 
   - name: path_length
     type: int
@@ -132,8 +132,8 @@ features:
     computation: "1 if the path is non-empty and not just '/', else 0"
     human_name: "Has a path"
     phrases:
-      toward_phishing: "The link includes a long path that can fake a trusted page."
-      toward_legitimate: "The URL has no long path hiding the destination."
+      toward_phishing: "The URL's has_path flag is {value} (1 = has a path beyond just '/'), which pushed the model's score toward phishing."
+      toward_legitimate: "The URL's has_path flag is {value} (1 = has a path beyond just '/'), which lowered the model's phishing score."
 
   - name: query_length
     type: int
